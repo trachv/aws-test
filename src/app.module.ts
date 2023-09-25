@@ -1,10 +1,17 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
+import awsConfig from './config/aws.config';
+import { MySqsModule } from './sqs/sqs.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({
+      load: [awsConfig],
+    }),
+    MySqsModule,
+  ],
+  providers: [],
+  controllers: [],
+  exports: [ConfigModule],
 })
 export class AppModule {}
