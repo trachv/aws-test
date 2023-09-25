@@ -2,7 +2,7 @@
 
 ## Description
 
-Sample nest application for demo aws services: 
+Sample nest.js application for demonstrate work with aws services:: 
 - sqs
 
 ## Installation
