@@ -4,13 +4,17 @@ import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
 import { ConfigService } from '@nestjs/config';
 import { SqsConsumerEventHandler, SqsMessageHandler } from '@ssut/nestjs-sqs';
 import { Message } from '@aws-sdk/client-sqs';
+import { DynamoDBService } from '../dynamodb/dynamodb.service';
 
 @Injectable()
 export class SqsService {
   private readonly sqs: SQSClient;
   private readonly logger = new Logger(SqsService.name);
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly dynamoDBService: DynamoDBService,
+  ) {
     this.sqs = new SQSClient({
       credentials: {
         accessKeyId: this.configService.get<string>('aws.accessKeyId'),
@@ -38,6 +42,7 @@ export class SqsService {
 
   @SqsMessageHandler('TEST', false)
   public async handleMessage(message: Message) {
+    await this.dynamoDBService.createItem('users', JSON.parse(message.Body));
     this.logger.log('Message handled successfully', message);
   }
 

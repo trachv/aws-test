@@ -3,6 +3,7 @@ import { SqsController } from './sqs.controller';
 import { SqsService } from './sqs.service';
 import { ConfigModule } from '@nestjs/config';
 import { SqsModule } from '@ssut/nestjs-sqs';
+import { DynamoDBModule } from 'src/dynamodb/dynamodb.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { SqsModule } from '@ssut/nestjs-sqs';
       producers: [],
     }),
     ConfigModule,
+    DynamoDBModule,
   ],
   providers: [SqsService],
   controllers: [SqsController],

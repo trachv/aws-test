@@ -4,6 +4,7 @@
 
 Sample nest.js application for demonstrate work with aws services:: 
 - sqs
+- dynamodb
 
 ## Installation
 
