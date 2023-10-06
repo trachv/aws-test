@@ -10,11 +10,7 @@ export class UserService {
   ) {}
 
   create(user: User) {
-    try {
-      return this.userModel.create(user);
-    } catch (error) {
-      console.log(error);
-    }
+    return this.userModel.create(user);
   }
 
   update(key: UserKey, user: Partial<User>) {
