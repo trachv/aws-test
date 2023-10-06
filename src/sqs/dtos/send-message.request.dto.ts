@@ -1,7 +1,20 @@
-import { IsNotEmpty, Length } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+
+class User {
+  @IsNotEmpty()
+  @IsNumber()
+  readonly id: number;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly name: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  readonly email: string;
+}
 
 export class SendMessageDto {
   @IsNotEmpty()
-  @Length(1, 255)
-  readonly message: string;
+  readonly user: User;
 }
