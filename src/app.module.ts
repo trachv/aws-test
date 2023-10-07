@@ -3,6 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import awsConfig from './config/aws.config';
 import { MySqsModule } from './sqs/sqs.module';
 import { DynamooseModule } from 'nestjs-dynamoose';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -22,8 +24,8 @@ import { DynamooseModule } from 'nestjs-dynamoose';
     }),
     MySqsModule,
   ],
-  providers: [],
-  controllers: [],
+  providers: [AppService],
+  controllers: [AppController],
   exports: [ConfigModule],
 })
 export class AppModule {}

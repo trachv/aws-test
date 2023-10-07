@@ -4,7 +4,7 @@ import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
 import { ConfigService } from '@nestjs/config';
 import { SqsConsumerEventHandler, SqsMessageHandler } from '@ssut/nestjs-sqs';
 import { Message } from '@aws-sdk/client-sqs';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import { SendMessageDto } from './dtos/send-message.request.dto';
 
 @Injectable()
