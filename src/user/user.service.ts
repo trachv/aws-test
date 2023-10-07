@@ -7,16 +7,27 @@ import {
   SqsMessageHandler,
   SqsService,
 } from '@ssut/nestjs-sqs';
-import { Message } from '@aws-sdk/client-sqs';
+import { DeleteMessageCommand, Message, SQSClient } from '@aws-sdk/client-sqs';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
+  private readonly sqs: SQSClient;
   private readonly logger = new Logger(UserService.name);
   constructor(
     @InjectModel('User')
     private userModel: Model<User, UserKey>,
     private readonly sqsService: SqsService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.sqs = new SQSClient({
+      credentials: {
+        accessKeyId: this.configService.get<string>('aws.accessKeyId'),
+        secretAccessKey: this.configService.get<string>('aws.secretAccessKey'),
+      },
+      region: this.configService.get<string>('aws.region'),
+    });
+  }
 
   create(user: User) {
     return this.userModel.create(user);
@@ -30,8 +41,15 @@ export class UserService {
   }
 
   @SqsMessageHandler('aws-demo-user-create', false)
-  cmdCreate({ Body }: Message) {
-    return this.userModel.create(JSON.parse(Body));
+  async cmdCreate({ Body, ReceiptHandle }: Message) {
+    await this.userModel.create(JSON.parse(Body));
+    this.logger.log('Message handled successfully');
+    this.sqs.send(
+      new DeleteMessageCommand({
+        QueueUrl: 'aws-demo-user-create',
+        ReceiptHandle,
+      }),
+    );
   }
 
   @SqsConsumerEventHandler('aws-demo-user-create', 'processing_error')
