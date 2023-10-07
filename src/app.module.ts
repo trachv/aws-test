@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import awsConfig from './config/aws.config';
-import { MySqsModule } from './sqs/sqs.module';
 import { DynamooseModule } from 'nestjs-dynamoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -22,7 +22,7 @@ import { AppService } from './app.service';
       }),
       inject: [ConfigService],
     }),
-    MySqsModule,
+    UserModule,
   ],
   providers: [AppService],
   controllers: [AppController],

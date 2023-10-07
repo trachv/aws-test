@@ -3,25 +3,52 @@ import { UserSchema } from './user.schema';
 import { UserService } from './user.service';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UserController } from './user.controller';
+import { SqsModule } from '@ssut/nestjs-sqs';
+import { Message } from '@aws-sdk/client-sqs';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    DynamooseModule.forFeatureAsync([
+    DynamooseModule.forFeature([
       {
         name: 'User',
-        useFactory: (_, configService: ConfigService) => {
-          return {
-            schema: UserSchema,
-            options: {
-              tableName: configService.get<string>('USER_TABLE_NAME'),
-            },
-          };
+        schema: UserSchema,
+        options: {
+          tableName: 'users',
         },
-        inject: [ConfigService],
       },
     ]),
+    SqsModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        const region = configService.get<string>('aws.region');
+
+        return {
+          consumers: [
+            {
+              name: 'aws-demo-user-create',
+              queueUrl: 'aws-demo-user-create',
+              region,
+              handleMessage: (message: Message) => message,
+              shouldDeleteMessages: false,
+            },
+          ],
+          producers: [
+            {
+              name: 'aws-demo-user-create',
+              queueUrl: 'aws-demo-user-create',
+              region,
+              handleMessage: (message: Message) => message,
+              shouldDeleteMessages: false,
+            },
+          ],
+        };
+      },
+      inject: [ConfigService],
+    }),
   ],
+  controllers: [UserController],
   providers: [UserService],
   exports: [UserService],
 })
