@@ -1,11 +1,8 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UserCreateResponseDto {
-  @IsNotEmpty()
-  @IsString()
-  readonly name: string;
-
-  @IsNotEmpty()
-  @IsEmail()
-  readonly email: string;
+  @ApiProperty({
+    description: 'The result of the user creation',
+  })
+  readonly result: string;
 }

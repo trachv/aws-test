@@ -32,8 +32,9 @@ export class UserService {
     });
   }
 
-  create(user: User) {
-    return this.userModel.create(user);
+  async create(user: User) {
+    await this.userModel.create(user);
+    return { result: 'ok' };
   }
 
   sqsSend(user: User) {
