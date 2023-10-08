@@ -12,6 +12,8 @@ Sample Nest.js application to demonstrate working with AWS services:
 $ npm install
 ```
 
+Set environment variables in .env using the following example - .example.env
+
 ## Running the app
 
 ```bash
