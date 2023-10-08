@@ -10,6 +10,9 @@ import {
 import { DeleteMessageCommand, Message, SQSClient } from '@aws-sdk/client-sqs';
 import { ConfigService } from '@nestjs/config';
 
+const QUEUE_NAME_USER_CREATE =
+  process.env.QUEUE_NAME_USER_CREATE || 'aws-demo-user-create';
+
 @Injectable()
 export class UserService {
   private readonly sqs: SQSClient;
@@ -34,25 +37,25 @@ export class UserService {
   }
 
   sqsSend(user: User) {
-    return this.sqsService.send('aws-demo-user-create', {
+    return this.sqsService.send(QUEUE_NAME_USER_CREATE, {
       id: uuidv4(),
       body: user,
     });
   }
 
-  @SqsMessageHandler('aws-demo-user-create', false)
+  @SqsMessageHandler(QUEUE_NAME_USER_CREATE, false)
   async cmdCreate({ Body, ReceiptHandle }: Message) {
     await this.userModel.create(JSON.parse(Body));
     this.logger.log('Message handled successfully');
     this.sqs.send(
       new DeleteMessageCommand({
-        QueueUrl: 'aws-demo-user-create',
+        QueueUrl: QUEUE_NAME_USER_CREATE,
         ReceiptHandle,
       }),
     );
   }
 
-  @SqsConsumerEventHandler('aws-demo-user-create', 'processing_error')
+  @SqsConsumerEventHandler(QUEUE_NAME_USER_CREATE, 'processing_error')
   public onProcessingError(error: Error, message: Message) {
     this.logger.log('Error handle message', message, error);
   }

@@ -24,11 +24,14 @@ import { Message } from '@aws-sdk/client-sqs';
       useFactory: async (configService: ConfigService) => {
         const region = configService.get<string>('aws.region');
 
+        const QUEUE_NAME_USER_CREATE =
+          process.env.QUEUE_NAME_USER_CREATE || 'aws-demo-user-create';
+
         return {
           consumers: [
             {
-              name: 'aws-demo-user-create',
-              queueUrl: 'aws-demo-user-create',
+              name: QUEUE_NAME_USER_CREATE,
+              queueUrl: QUEUE_NAME_USER_CREATE,
               region,
               handleMessage: (message: Message) => message,
               shouldDeleteMessages: false,
@@ -36,8 +39,8 @@ import { Message } from '@aws-sdk/client-sqs';
           ],
           producers: [
             {
-              name: 'aws-demo-user-create',
-              queueUrl: 'aws-demo-user-create',
+              name: QUEUE_NAME_USER_CREATE,
+              queueUrl: QUEUE_NAME_USER_CREATE,
               region,
               handleMessage: (message: Message) => message,
               shouldDeleteMessages: false,
