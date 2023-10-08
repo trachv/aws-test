@@ -2,7 +2,7 @@
 
 ## Description
 
-Sample nest.js application for demonstrate work with aws services:: 
+Sample Nest.js application to demonstrate working with AWS services: 
 - sqs
 - dynamodb
 
